@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>ChatGPT Playground</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js"></script>
+</head>
+
+<body>
+  <div class="system">
+
+    <h1>ChatGPT Playground</h1>
+    <div class="controls">
+      <button id="do-load">Load from</button> /
+      <button id="do-save">Save to</button> clipboard.
+    </div>
+
+    <h2>System Prompt:</h2>
+    <div class="prompt">
+      <textarea id="system-prompt" placeholder="You are a helpful assistant."></textarea>
+    </div>
+
+    <h2>Variables:</h2>
+    <p>
+      Variables in form of <code>${name}</code> can be used in the prompt and <i>user</i> messages.
+      They will be replaced with values below. Variables are automatically added here when used.
+    </p>
+    <template id="var-template">
+      <div class="var">
+        <label class="name"></label>
+        <textarea class="value"></textarea>
+      </div>
+    </template>
+    <div id="vars"></div>
+
+  </div>
+
+  <div class="conversation">
+    <template id="message-template">
+      <div class="message">
+        <label class="type"></label>
+        <textarea class="content"></textarea>
+      </div>
+    </template>
+    <h2>Messages:</h2>
+    <div id="messages"></div>
+
+  </div>
+
+  <div class="knobs">
+    <h2>Settings:</h2>
+    <label>Model:</label>
+    <select id="model">
+      <option value="gpt4" selected="selected">gpt4</option>
+    </select>
+  </div>
+
+</body>
+
+</html>

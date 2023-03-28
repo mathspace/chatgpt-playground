@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Jura&display=swap');
+
+* {
+  box-sizing: border-box;
+  font-family: 'Jura', sans-serif;
+}
+
+html {
+  background-color: white;
+  background-image: url('bg.svg');
+  background-size: 35.5px;
+  background-position: -5px -5px;
+}
+
+html,
+body {
+  font-size: 14px;
+  line-height: 1.5em;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+input,
+select,
+textarea {
+  padding: 0.2em 0.5em;
+  font-size: 100%;
+}
+
+textarea {
+  width: 100%;
+  margin: 0;
+  border-left: none;
+  border-right: none;
+  border-top: 1px solid rgb(100, 100, 100);
+  border-bottom: 1px solid rgb(100, 100, 100);
+  resize: vertical;
+  min-height: 5em;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+}
+
+textarea:focus {
+  outline: none;
+}
+
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+  margin: 0.5em 0;
+}
+
+h1 {
+  font-size: 180%;
+}
+
+h2 {
+  font-size: 130%;
+}
+
+h3 {
+  font-size: 120%;
+}
+
+h4 {
+  font-size: 110%;
+}
+
+h5,
+h6 {
+  font-size: 100%;
+}
+
+body>div {
+  float: left;
+  padding: 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100%;
+}
+
+body>div.knobs {
+  width: 200px;
+}
+
+body>div.conversation,
+body>div.system {
+  width: calc((100% - 200px) / 2);
+}
+
+body>div.conversation {
+  border-left: 1px solid rgb(100, 100, 100);
+  border-right: 1px solid rgb(100, 100, 100);
+}
+
+body>div>div {
+  margin-bottom: 1.5em;
+}
+
+code {
+  font-family: monospace;
+}
