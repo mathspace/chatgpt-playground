@@ -24,7 +24,7 @@
 
     <h2>Variables:</h2>
     <p>
-      Variables in form of <code>${name}</code> can be used in the prompt and <i>user</i> messages.
+      Variables in form of ${name} can be used in the prompt and <i>user</i> messages.
       They will be replaced with values below. Variables are automatically added here when used.
     </p>
     <template id="var-template">
@@ -33,14 +33,23 @@
         <textarea class="value"></textarea>
       </div>
     </template>
-    <div id="vars"></div>
+    <div id="vars">
+      <div class="var" id="var-blah">
+        <label class="name">Instruction:</label>
+        <textarea class="value"></textarea>
+      </div>
+      <div class="var" id="var-blah2">
+        <label class="name">MaxReplies:</label>
+        <textarea class="value"></textarea>
+      </div>
+    </div>
 
   </div>
 
   <div class="conversation">
     <template id="message-template">
       <div class="message">
-        <label class="type"></label>
+        <label class="type"><span class="n"></span> ⮂:</label>
         <textarea class="content"></textarea>
       </div>
     </template>
@@ -55,6 +64,7 @@
     <select id="model">
       <option value="gpt4" selected="selected">gpt4</option>
     </select>
+    <p> more goes here</p>
   </div>
 
 </body>

@@ -34,8 +34,8 @@ textarea {
   margin: 0;
   border-left: none;
   border-right: none;
-  border-top: 1px solid rgb(100, 100, 100);
-  border-bottom: 1px solid rgb(100, 100, 100);
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
   resize: vertical;
   min-height: 5em;
   padding-top: 0.5em;
@@ -96,8 +96,8 @@ body>div.system {
 }
 
 body>div.conversation {
-  border-left: 1px solid rgb(100, 100, 100);
-  border-right: 1px solid rgb(100, 100, 100);
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
 }
 
 body>div>div {
@@ -106,4 +106,9 @@ body>div>div {
 
 code {
   font-family: monospace;
+}
+
+
+#messages label.type {
+  cursor: pointer;
 }
