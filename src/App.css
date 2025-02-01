@@ -199,10 +199,6 @@ code {
   height: 8em;
 }
 
-.cost-item::before {
-  content: "~$ ";
-}
-
 label[for="wide-screen"] {
   -webkit-user-select: none;
   user-select: none;

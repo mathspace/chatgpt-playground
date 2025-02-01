@@ -134,89 +134,57 @@ export const models = [
 
   {
     id: "gpt-4o-mini-2024-07-18",
-    promptCost: 0.15 / 1e6,
-    completionCost: 0.6 / 1e6,
   },
   {
     id: "gpt-4o-2024-05-13",
-    promptCost: 1e-5 / 2,
-    completionCost: 3e-5 / 2,
   },
   {
     id: "o1-2024-12-17",
-    promptCost: (15 / 1e6),
-    completionCost: (60 / 1e6) * 10, // Hidden cost can be 10x higher than actual user visible cost.
   },
   {
     id: "o1-preview-2024-09-12",
-    promptCost: (15 / 1e6),
-    completionCost: (60 / 1e6) * 10, // Hidden cost can be 10x higher than actual user visible cost.
   },
   {
     id: "o1-mini-2024-09-12",
-    promptCost: (15 / 1e6) * 0.2,
-    completionCost: ((60 / 1e6) * 0.2) * 10, // Hidden cost can be 10x higher than actual user visible cost.
   },
   {
     id: "gpt-4-turbo-2024-04-09",
-    promptCost: 1e-5,
-    completionCost: 3e-5,
   },
   {
     id: "gpt-4-0125-preview",
-    promptCost: 1e-5,
-    completionCost: 3e-5,
   },
   {
     id: "gpt-4-1106-preview",
-    promptCost: 1e-5,
-    completionCost: 3e-5,
   },
   {
     id: "gpt-4-1106-vision-preview",
-    promptCost: 1e-5,
-    completionCost: 3e-5,
   },
 
 
   {
     id: "gpt-4-0613",
-    promptCost: 3e-5,
-    completionCost: 6e-5,
   },
   {
     id: "gpt-4-32k-0613",
-    promptCost: 6e-5,
-    completionCost: 1.2e-4,
   },
   {
     id: "gpt-4-0314",
-    promptCost: 3e-5,
-    completionCost: 6e-5,
   },
 
   {
     id: "gpt-3.5-turbo-0125",
-    promptCost: 5e-7,
-    completionCost: 1.5e-6,
   },
   {
     id: "gpt-3.5-turbo-1106",
-    promptCost: 5e-7,
-    completionCost: 1.5e-6,
   },
   {
     id: "gpt-3.5-turbo-0301",
-    promptCost: 5e-7,
-    completionCost: 1.5e-6,
   },
 
   // Fine tuned and other base models.
 
   {
     prefix: "ft:gpt-3.5-turbo-0613:",
-    promptCost: 3e-6,
-    completionCost: 6e-6,
   }
 ];
 
@@ -253,53 +221,6 @@ export function createValidator() {
 // This is an estimate arrived at by running a whole bunch of text through
 // tiktoken tokenizer.
 const charToTokenRatio = 0.34;
-
-export function estimateCost(payload) {
-
-  let model = models.find(m => m.id ? m.id === payload.model : payload.model.startsWith(m.prefix));
-  if (model && model.alias) {
-    model = models.find(m => m.id === model.alias);
-  }
-
-  let totalCost = 0;
-  let roundTrips = 0;
-
-  // Walk through the conversation.
-  // Skip to end of each consequetive sequence of user messages.
-  // For assistant messages, add one to the set one at a time.
-
-  for (var upTo = 0; upTo < payload.messages.length; upTo++) {
-    const msg = payload.messages[upTo];
-    if (msg.role === "assistant") {
-      if (model) {
-        const promptChars = payload.messages.slice(0, upTo).map(
-          m => m.function_call ? m.function_call.arguments : m.content
-        ).join('').length;
-        const promptCost = promptChars * charToTokenRatio * model.promptCost;
-        const completionCost = (msg.function_call ? msg.function_call.arguments : msg.content).length * charToTokenRatio * model.completionCost;
-        totalCost += promptCost + completionCost;
-      }
-      roundTrips++;
-    }
-  }
-  // In case the conversation doesn't end with assistant messages, just
-  // calculate the prompt cost.
-  if (model && payload.messages.slice(-1)[0].role !== "assistant") {
-    const promptChars = payload.messages.slice(0, upTo).map(
-      m => m.function_call ? m.function_call.arguments : m.content
-    ).join('').length;
-    const promptCost = promptChars * charToTokenRatio * model.promptCost;
-    totalCost += promptCost;
-  }
-
-  // Add functions
-  if (model && payload.functions) {
-    const promptCost = JSON.stringify(payload.functions).length * charToTokenRatio * model.promptCost;
-    totalCost += promptCost;
-  }
-
-  return { totalCost: model ? totalCost : null, roundTrips };
-}
 
 export function ModelDropdown({ model, setModel }) {
   const baseModel = !!models.find(m => m.id === model);

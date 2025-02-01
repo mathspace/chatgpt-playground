@@ -16,7 +16,7 @@ import WindowHash from './WindowHash.jsx';
 import LogitBiasSet from './LogitBias.jsx';
 import { CompletionURLModal } from './CompletionURLModal.jsx';
 import { ResponseFormatSelector } from './ResponseFormatSelector.jsx';
-import { codeRunnerFuncDefined, codeRunnerFunctionName, mergeCodeRunnerFuncDef } from './CodeRunner.jsx';
+import { codeRunnerFuncDefined, mergeCodeRunnerFuncDef } from './CodeRunner.jsx';
 
 // Converts the ad-hoc state format of pre-react version to official OpenAI's
 // payload format.
@@ -264,8 +264,6 @@ export default function App() {
     }
   }, [submitTriggered, submit]);
 
-  let { roundTrips, totalCost } = OpenAI.estimateCost(renderedPayload);
-
   const [showAPIKeyModal, setShowAPIKeyModal] = useState(false);
   const [showCompletionURLModal, setShowCompletionURLModal] = useState(false);
 
@@ -397,23 +395,7 @@ export default function App() {
       <button className="open-api-key" onClick={() => setShowAPIKeyModal(true)} title="Set API Key">🔑</button>
       <button className="open-completion-url" onClick={() => setShowCompletionURLModal(true)} title="Set Completion URL">🌐</button>
 
-      <h2>Cost</h2>
-
-      <p className="cost" title="Based on 30% character to token ratio estimate.">
-        <span title="Usual # of completion API calls for current history.">
-          Round Trips: <span>{roundTrips}</span></span><br />
-        {totalCost === null ?
-          <i>cost not available for selected model</i>
-          :
-          <>
-            <b>1x = </b><span className="cost-item">{totalCost.toFixed(2)}</span> * <br />
-            100x = <span className="cost-item">{(totalCost * 100).toFixed(2)}</span>*<br />
-            <i title="Calculated as if you started with only system prompt and got to this point.">* comulative</i>
-          </>
-        }
-      </p>
-
-      <h2>Settings
+      <h2 style={{ paddingTop: "1em", clear: "both" }}>Settings
         <button
           style={{ float: "right" }}
           title="Save current settings as default"
