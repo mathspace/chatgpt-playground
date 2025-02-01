@@ -92,6 +92,10 @@ export const models = [
     alias: "gpt-4o-2024-05-13",
   },
   {
+    id: "chatgpt-4o-latest",
+    alias: "chatgpt-4o-latest",
+  },
+  {
     id: "gpt-4o-mini",
     alias: "gpt-4o-mini-2024-07-18",
   },
@@ -106,6 +110,10 @@ export const models = [
   {
     id: "o1-mini",
     alias: "o1-mini-2024-09-12",
+  },
+  {
+    id: "o3-mini",
+    alias: "o3-mini-2025-01-31",
   },
   {
     id: "gpt-4-turbo",
@@ -146,6 +154,9 @@ export const models = [
   },
   {
     id: "o1-mini-2024-09-12",
+  },
+  {
+    id: "o3-mini-2025-01-31",
   },
   {
     id: "gpt-4-turbo-2024-04-09",
