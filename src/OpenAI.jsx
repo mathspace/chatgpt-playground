@@ -89,59 +89,65 @@ export function createRequest({ apiKey, payload, dataCallback, completionURL = o
 export const models = [
   {
     id: "gpt-4o",
-    alias: "gpt-4o-2024-05-13",
+    alias: true,
   },
   {
     id: "chatgpt-4o-latest",
-    alias: "chatgpt-4o-latest",
+    alias: true,
   },
   {
     id: "gpt-4o-mini",
-    alias: "gpt-4o-mini-2024-07-18",
+    alias: true,
   },
   {
     id: "o1",
-    alias: "o1-2024-12-17",
+    alias: true,
   },
   {
     id: "o1-preview",
-    alias: "o1-preview-2024-09-12",
+    alias: true,
   },
   {
     id: "o1-mini",
-    alias: "o1-mini-2024-09-12",
+    alias: true,
   },
   {
     id: "o3-mini",
-    alias: "o3-mini-2025-01-31",
+    alias: true,
   },
   {
     id: "gpt-4-turbo",
-    alias: "gpt-4-turbo-2024-04-09",
+    alias: true,
   },
   {
     id: "gpt-4-turbo-preview",
-    alias: "gpt-4-0125-preview",
+    alias: true,
   },
   {
     id: "gpt-4-vision-preview",
-    alias: "gpt-4-1106-vision-preview",
+    alias: true,
   },
   {
     id: "gpt-4",
-    alias: "gpt-4-0613",
+    alias: true,
   },
   {
     id: "gpt-4-32k",
-    alias: "gpt-4-32k-0613",
+    alias: true,
   },
   {
     id: "gpt-3.5-turbo",
-    alias: "gpt-3.5-turbo-0125",
+    alias: true,
   },
 
   {
     id: "gpt-4o-mini-2024-07-18",
+  },
+  {
+    id: "gpt-4o-2024-11-20",
+  },
+  {
+    id: "gpt-4o-2024-08-06",
   },
   {
     id: "gpt-4o-2024-05-13",
