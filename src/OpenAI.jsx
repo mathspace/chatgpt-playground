@@ -88,6 +88,14 @@ export function createRequest({ apiKey, payload, dataCallback, completionURL = o
 
 export const models = [
   {
+    id: "o3",
+    alias: true,
+  },
+  {
+    id: "o4-mini",
+    alias: true,
+  },
+  {
     id: "gpt-4.1",
     alias: true,
   },
@@ -152,6 +160,12 @@ export const models = [
     alias: true,
   },
 
+  {
+    id: "o3-2025-04-16",
+  },
+  {
+    id: "o4-mini-2025-04-16",
+  },
   {
     id: "gpt-4.1-2025-04-14",
   },
