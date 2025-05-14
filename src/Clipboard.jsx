@@ -68,7 +68,7 @@ export function LoadButton({ children = "Load", enabled = true, setAppState }) {
   );
 }
 
-export function SaveButton({ children = "Save", appState }) {
+export function SaveButton({ children = "Save", appState, autorun }) {
   const save = e => {
     try {
       copyToClipboard(JSON.stringify(appState, null, 2));
@@ -83,7 +83,7 @@ export function SaveButton({ children = "Save", appState }) {
   );
 }
 
-export function CopyLinkButton({ children = "Copy Link", appState }) {
+export function CopyLinkButton({ children = "Copy Link", appState, autorun }) {
   const copy = e => {
     const url = window.location.href.split('#')[0] + '#' + hashEncode(appState);
     try {

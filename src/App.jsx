@@ -154,8 +154,14 @@ export default function App() {
       if (s.vars === undefined) {
         s.vars = {};
       }
+      const autorun = s.autorun || false;
+      // Remove autorun from the state so that we don't save it.
+      delete s.autorun;
       validateState(s);
       unvalidatedSetState(s);
+      if (autorun) {
+        setSubmitTriggered(true);
+      }
       return true;
     } catch (e) {
       alert("Load failed: " + JSON.stringify(e));
@@ -293,6 +299,8 @@ export default function App() {
 
   const streaming = Boolean(openAIRequest);
 
+  const [autorun, setAutorun] = useState(false);
+
   return <div id="app-container" className={(widescreen ? 'widescreen' : '')}>
     <div className="app column system">
 
@@ -308,10 +316,15 @@ export default function App() {
         &nbsp;|&nbsp;
         <LoadButton enabled={!streaming} setAppState={loadState}>Load from</LoadButton>
         &nbsp;/&nbsp;
-        <SaveButton appState={state}>Save to</SaveButton>
+        <SaveButton appState={{ ...state, autorun }}>Save to</SaveButton>
         &nbsp;/&nbsp;
-        <CopyLinkButton appState={state}>Copy link to</CopyLinkButton>
+        <CopyLinkButton appState={{ ...state, autorun }}>Copy link to</CopyLinkButton>
         &nbsp;clipboard.
+        <span style={{ color: "#888", fontStyle: "italic" }} title="Tick to auto-submit the prompt after loading a saved document.">
+          &nbsp;—&nbsp;
+          <label htmlFor="autorun">with auto-run</label>
+          <input id="autorun" type="checkbox" enabled={autorun} onInput={e => { setAutorun(e.target.checked); }} />
+        </span>
       </div>
 
       <h2>System Prompt<InfoLabel href="messages" /></h2>
