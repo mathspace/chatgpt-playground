@@ -75,6 +75,9 @@ function getMarkdownFunctionCallBox({ m, i }) {
 function MarkdownRenderer({ content, showCaret, renderMath, renderDiagrams }) {
 
   const markdownComponents = useMemo(() => ({
+    a({ node, ...props }) {
+      return <a {...props} target="_blank" rel="noopener noreferrer" />;
+    },
     code({ children, className, node, ...rest }) {
       const match = /language-(\w+)/.exec(className || '')
 
@@ -110,7 +113,7 @@ function MarkdownRenderer({ content, showCaret, renderMath, renderDiagrams }) {
     return <Markdown
       linkTarget="_blank"
       remarkPlugins={remarkPlugins}
-      skipHtml={false}
+      skipHtml={true}
       rehypePlugins={rehypePlugins}
       components={markdownComponents}
       children={content + (showCaret ? '▏' : '')}
