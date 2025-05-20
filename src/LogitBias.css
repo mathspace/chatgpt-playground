@@ -1,7 +1,7 @@
 .logit-bias-set .item .delete {
   cursor: pointer;
   padding: 0.4em;
-  color: #555;
+  color: var(--primary-color);
 }
 
 .logit-bias-set .item .delete:hover {
@@ -34,7 +34,7 @@
 .logit-bias-add-modal .add-tokens>span {
   display: inline-block;
   cursor: pointer;
-  background-color: #666;
+  background-color: var(--primary-color);
   color: #fff;
   padding: 0 0.3em;
   margin: 0.1em 0;

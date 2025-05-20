@@ -11,12 +11,12 @@
   float: right;
   margin-left: 0.5em;
   padding: 0 0.5em;
-  color: #555;
+  color: var(--primary-color);
 }
 
 .messages>.message>.run-code:hover {
   color: white;
-  background: rgb(96, 96, 220);
+  background: var(--primary-color);
 }
 
 .messages>.message>.run-code::before {
@@ -80,7 +80,7 @@
 .messages .markdown th {
   border-collapse: collapse;
   border-spacing: 0;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
 }
 
 .messages .markdown table {
@@ -100,9 +100,9 @@
   margin: 0 -10px;
   padding: 0 10px;
   overflow-x: auto;
-  background: #fff;
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
+  background: var(--btn-bg);
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .messages .markdown pre {
@@ -112,7 +112,7 @@
 
 .messages .markdown pre:has(code) {
   color: #333;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 3px;
   line-height: 1em;
   padding: 0.5em 0.7em;
