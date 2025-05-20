@@ -1,11 +1,11 @@
 .var-name {
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--border-color);
   margin: 0 -10px;
   padding: 0 10px;
   display: inline-block;
   width: calc(100% + 20px);
   top: 0;
-  background-color: white;
+  background-color: var(--btn-bg);
   position: sticky;
   position: -webkit-sticky;
 }
