@@ -1,4 +1,4 @@
-import { encode, decode } from "gpt-tokenizer/esm/encoding/cl100k_base"
+import { encode, decode } from "gpt-tokenizer/esm/encoding/cl100k_base";
 
 export const openAICompletionURL = "https://api.openai.com/v1/chat/completions";
 
@@ -7,7 +7,7 @@ async function getResponse({ url, apiKey, payload, signal }) {
     method: "POST",
     headers: {
       Authorization: "Bearer " + apiKey,
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({ ...payload, n: 1 }),
     signal: signal,
@@ -17,16 +17,21 @@ async function getResponse({ url, apiKey, payload, signal }) {
     var jsonErr;
     try {
       jsonErr = await response.json();
-    } catch (e) { }
+    } catch (e) {}
     if (jsonErr) {
-      throw 'APIError: ' + (jsonErr.error.message || jsonErr.error.code);
+      throw "APIError: " + (jsonErr.error.message || jsonErr.error.code);
     }
     throw `HTTPError: ${response.status}`;
   }
   return response;
 }
 
-export function createRequest({ apiKey, payload, dataCallback, completionURL = openAICompletionURL }) {
+export function createRequest({
+  apiKey,
+  payload,
+  dataCallback,
+  completionURL = openAICompletionURL,
+}) {
   payload = JSON.parse(JSON.stringify(payload));
   // Remove system message if empty.
   if (payload.messages[0].role === "system" && !payload.messages[0].content) {
@@ -37,7 +42,12 @@ export function createRequest({ apiKey, payload, dataCallback, completionURL = o
   if (payload.stream !== true) {
     return {
       send: async () => {
-        const response = await getResponse({ url: completionURL, apiKey, payload, signal: abortController.signal });
+        const response = await getResponse({
+          url: completionURL,
+          apiKey,
+          payload,
+          signal: abortController.signal,
+        });
         const data = await response.json();
         if (data.error) {
           throw `${data.error.type}: ${data.error.message}`;
@@ -46,12 +56,17 @@ export function createRequest({ apiKey, payload, dataCallback, completionURL = o
         await dataCallback();
       },
       cancel: () => abortController.abort(),
-    }
+    };
   }
 
   return {
     send: async () => {
-      const response = await getResponse({ url: completionURL, apiKey, payload, signal: abortController.signal });
+      const response = await getResponse({
+        url: completionURL,
+        apiKey,
+        payload,
+        signal: abortController.signal,
+      });
       const reader = response.body.getReader();
       const decoder = new TextDecoder("utf-8");
 
@@ -87,6 +102,18 @@ export function createRequest({ apiKey, payload, dataCallback, completionURL = o
 }
 
 export const models = [
+  {
+    id: "gpt-5",
+    alias: true,
+  },
+  {
+    id: "gpt-5-mini",
+    alias: true,
+  },
+  {
+    id: "gpt-5-nano",
+    alias: true,
+  },
   {
     id: "o3",
     alias: true,
@@ -161,6 +188,15 @@ export const models = [
   },
 
   {
+    id: "gpt-5-2025-08-07",
+  },
+  {
+    id: "gpt-5-mini-2025-08-07",
+  },
+  {
+    id: "gpt-5-nano-2025-08-07",
+  },
+  {
     id: "o3-2025-04-16",
   },
   {
@@ -212,7 +248,6 @@ export const models = [
     id: "gpt-4-1106-vision-preview",
   },
 
-
   {
     id: "gpt-4-0613",
   },
@@ -237,26 +272,28 @@ export const models = [
 
   {
     prefix: "ft:gpt-3.5-turbo-0613:",
-  }
+  },
 ];
 
-modelNamesSortedByLength = models.map(m => m.id).sort((a, b) => b.length - a.length);
+modelNamesSortedByLength = models
+  .map((m) => m.id)
+  .sort((a, b) => b.length - a.length);
 
 export function createValidator() {
-  return p => {
+  return (p) => {
     // There must be one and only one system message and it must be the first
     // message.
     if (p.messages.length === 0 || p.messages[0].role !== "system") {
       throw "The first message must be a system message.";
     }
-    if (p.messages.slice(1).find(m => m.role === "system")) {
+    if (p.messages.slice(1).find((m) => m.role === "system")) {
       throw "There can be only one system message.";
     }
     // Duplicate function names are disallowed.
     const nameSet = new Set();
     for (const fn of p.functions || []) {
       if (nameSet.has(fn.name)) {
-        throw "Duplicate function names are not allowed."
+        throw "Duplicate function names are not allowed.";
       } else {
         nameSet.add(fn.name);
       }
@@ -275,39 +312,66 @@ export function createValidator() {
 const charToTokenRatio = 0.34;
 
 export function ModelDropdown({ model, setModel }) {
-  const baseModel = !!models.find(m => m.id === model);
-  return <>
-    <select onChange={e => setModel(e.target.value)} value={baseModel ? model : ""}>
-      {models.filter(m => m.id && m.alias).map(({ id }, i) => <option key={id} value={id}>{id}</option>)}
-      <option disabled>Snapshots</option>
-      {models.filter(m => m.id && !m.alias).map(({ id }, i) => <option key={id} value={id}>{id}</option>)}
-      <option disabled>Others</option>
-      <option value="">Custom</option>
-    </select>
-    {!baseModel &&
-      <input
-        type="text"
-        placeholder="Custom model name"
-        style={{ marginTop: "2px" }}
-        onChange={e => setModel(e.target.value)}
-        value={model} />
-    }
-  </>;
+  const baseModel = !!models.find((m) => m.id === model);
+  return (
+    <>
+      <select
+        onChange={(e) => setModel(e.target.value)}
+        value={baseModel ? model : ""}
+      >
+        {models
+          .filter((m) => m.id && m.alias)
+          .map(({ id }, i) => (
+            <option key={id} value={id}>
+              {id}
+            </option>
+          ))}
+        <option disabled>Snapshots</option>
+        {models
+          .filter((m) => m.id && !m.alias)
+          .map(({ id }, i) => (
+            <option key={id} value={id}>
+              {id}
+            </option>
+          ))}
+        <option disabled>Others</option>
+        <option value="">Custom</option>
+      </select>
+      {!baseModel && (
+        <input
+          type="text"
+          placeholder="Custom model name"
+          style={{ marginTop: "2px" }}
+          onChange={(e) => setModel(e.target.value)}
+          value={model}
+        />
+      )}
+    </>
+  );
 }
 
 export function ReasoningEffortDropdown({ effort, setEffort }) {
-  return <>
-    <select onChange={e => setEffort(e.target.value || undefined)} value={effort ? effort : ""}>
-      <option value="">Default (Medium)</option>
-      {["Low", "Medium", "High"].map(e => <option key={e.toLowerCase()} value={e.toLowerCase()}>{e}</option>)}
-      {effort && { low: 1, medium: 1, high: 1 }[effort] === undefined &&
-        <>
-          <option disabled>Custom</option>
-          <option value={effort}>{effort}</option>
-        </>
-      }
-    </select>
-  </>;
+  return (
+    <>
+      <select
+        onChange={(e) => setEffort(e.target.value || undefined)}
+        value={effort ? effort : ""}
+      >
+        <option value="">Default (Medium)</option>
+        {["Low", "Medium", "High"].map((e) => (
+          <option key={e.toLowerCase()} value={e.toLowerCase()}>
+            {e}
+          </option>
+        ))}
+        {effort && { low: 1, medium: 1, high: 1 }[effort] === undefined && (
+          <>
+            <option disabled>Custom</option>
+            <option value={effort}>{effort}</option>
+          </>
+        )}
+      </select>
+    </>
+  );
 }
 
 // This is necessary because the tokenizer is stateful to handle multi-GPT token
