@@ -4,7 +4,7 @@ steps:
  - Run the prompt.
  - Click the Copy button on the generated block.
  - Verify that the code is copied to the clipboard.
-met: false
+status: in-progress
 
 description: Show token and cost info at the end of a response
 steps:
@@ -12,7 +12,7 @@ steps:
   - Run the prompt.
   - At the end of the response, check for token usage and cost information.
   - Verify that the token count and cost are displayed correctly.
-met: false
+status: unmet
 
 description: Allow collapsing variables
 steps:
@@ -26,4 +26,4 @@ steps:
   - Verify all variables are collapsed.
   - Click uncollapse all button.
   - Verify all variables are uncollapsed.
-met: false
+status: unmet
