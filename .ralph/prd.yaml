@@ -1,0 +1,29 @@
+description: Copy button for code blocks in LLM response.
+steps:
+ - Write a prompt that asks the LLM to generate code in a specific programming language.
+ - Run the prompt.
+ - Click the Copy button on the generated block.
+ - Verify that the code is copied to the clipboard.
+met: false
+
+description: Show token and cost info at the end of a response
+steps:
+  - Write a prompt that asks the LLM to generate a detailed response.
+  - Run the prompt.
+  - At the end of the response, check for token usage and cost information.
+  - Verify that the token count and cost are displayed correctly.
+met: false
+
+description: Allow collapsing variables
+steps:
+  - Add a few ${} variables in the prompt.
+  - Add some large content to each variable.
+  - Click the collapse botton on each variable.
+  - Verify the value is hidden and an easy to spot uncollapse button is shown.
+  - Click the uncollapse button on each variable.
+  - Verify the value is shown again.
+  - Click collapse all button.
+  - Verify all variables are collapsed.
+  - Click uncollapse all button.
+  - Verify all variables are uncollapsed.
+met: false
