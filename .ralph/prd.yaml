@@ -4,7 +4,7 @@ steps:
  - Run the prompt.
  - Click the Copy button on the generated block.
  - Verify that the code is copied to the clipboard.
-status: in-progress
+status: met
 
 description: Show token and cost info at the end of a response
 steps:

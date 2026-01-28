@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { hashEncode } from './AppStateCodec.jsx';
 
 // copyToClipboard copies the given text to the clipboard by some hacky means.
-function copyToClipboard(text) {
+export function copyToClipboard(text) {
   const el = document.createElement('textarea');
   el.value = text;
   el.style.position = "fixed";

@@ -117,3 +117,39 @@
   line-height: 1em;
   padding: 0.5em 0.7em;
 }
+
+.messages .markdown .code-block {
+  position: relative;
+  margin: 0.75em 0;
+}
+
+.messages .markdown .code-block__content {
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  line-height: 1.2em;
+  padding: 0.5em 0.7em;
+}
+
+.messages .markdown .copy-code {
+  position: absolute;
+  top: 0.4em;
+  right: 0.4em;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  background: #f8f8f8;
+  color: #555;
+  font-size: 0.72em;
+  padding: 0.2em 0.5em;
+  cursor: pointer;
+}
+
+.messages .markdown .copy-code:hover {
+  background: #eee;
+}
+
+.messages .markdown .copy-code.copied {
+  background: #e7f7e7;
+  border-color: #b7ddb7;
+  color: #2c7a2c;
+}

@@ -11,6 +11,7 @@ import Mermaid from "./Mermaid";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { codeRunnerFunctionName, getCodeRunnerFunctionCallCode, runPython } from "./CodeRunner";
+import { copyToClipboard } from "./Clipboard.jsx";
 
 const typeToRole = {
   'user': 'user',
@@ -41,8 +42,8 @@ const customHighlighterTheme = {
   "pre[class*=\"language-\"]": {
     ...oneLight["pre[class*=\"language-\"]"],
     margin: "0",
-    padding: "0",
-    borderRadius: "0",
+    padding: "0.5em 0.7em",
+    borderRadius: "3px",
     backgroundColor: "transparent",
   },
   "code[class*=\"language-\"]": {
@@ -53,6 +54,52 @@ const customHighlighterTheme = {
     // fontSize: "inherit",
   },
 };
+
+function CopyableCodeBlock({ code, language }) {
+  const [copied, setCopied] = useState(false);
+  const resetTimerRef = useRef(null);
+
+  useEffect(() => () => {
+    if (resetTimerRef.current) {
+      clearTimeout(resetTimerRef.current);
+    }
+  }, []);
+
+  const handleCopy = () => {
+    if (!code) {
+      return;
+    }
+    copyToClipboard(code);
+    setCopied(true);
+    if (resetTimerRef.current) {
+      clearTimeout(resetTimerRef.current);
+    }
+    resetTimerRef.current = setTimeout(() => {
+      setCopied(false);
+    }, 1200);
+  };
+
+  return (
+    <div className="code-block">
+      <button
+        type="button"
+        className={`copy-code${copied ? " copied" : ""}`}
+        onClick={handleCopy}
+        title="Copy code"
+        aria-label="Copy code"
+      >
+        {copied ? "Copied" : "Copy"}
+      </button>
+      <SyntaxHighlighter
+        PreTag="div"
+        className="code-block__content"
+        children={code}
+        language={language}
+        style={customHighlighterTheme}
+      />
+    </div>
+  );
+}
 
 function getCodeRunButton({ m, runCode }) {
   const code = getCodeRunnerFunctionCallCode(m);
@@ -75,26 +122,35 @@ function getMarkdownFunctionCallBox({ m, i }) {
 function MarkdownRenderer({ content, showCaret, renderMath, renderDiagrams }) {
 
   const markdownComponents = useMemo(() => ({
-    code({ children, className, node, ...rest }) {
-      const match = /language-(\w+)/.exec(className || '')
-
-      if (!match) {
-        return <code {...rest} className={className}>
+    code({ children, className, ...rest }) {
+      return (
+        <code {...rest} className={className}>
           {children}
-        </code>;
+        </code>
+      );
+    },
+    pre({ children }) {
+      const codeElement = Array.isArray(children) ? children[0] : children;
+      if (!codeElement || !codeElement.props) {
+        return <pre>{children}</pre>;
       }
 
-      if (renderDiagrams && match[1] === 'mermaid') {
-        return <Mermaid chart={String(children)} />;
+      const className = codeElement.props.className || '';
+      const match = /language-(\w+)/.exec(className);
+      const language = match ? match[1] : undefined;
+      const rawCode = codeElement.props.children;
+      const code = String(Array.isArray(rawCode) ? rawCode.join('') : rawCode || '').replace(/\n$/, '');
+
+      if (renderDiagrams && language === 'mermaid') {
+        return <Mermaid chart={code} />;
       }
 
-      return <SyntaxHighlighter
-        {...rest}
-        PreTag="div"
-        children={String(children).replace(/\n$/, '')}
-        language={match[1]}
-        style={customHighlighterTheme}
-      />;
+      return (
+        <CopyableCodeBlock
+          code={code}
+          language={language}
+        />
+      );
     }
   }), [renderDiagrams]);
 
