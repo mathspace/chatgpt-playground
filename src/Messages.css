@@ -153,3 +153,46 @@
   border-color: #b7ddb7;
   color: #2c7a2c;
 }
+
+.usage-stats {
+  margin-top: 0.75em;
+  border: 1px solid #e3e3e3;
+  border-radius: 6px;
+  background: #fafafa;
+  padding: 0.6em 0.75em;
+}
+
+.usage-stats__title {
+  font-size: 0.8em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #777;
+  margin-bottom: 0.35em;
+}
+
+.usage-stats__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9em;
+}
+
+.usage-stats__table th,
+.usage-stats__table td {
+  padding: 0.2em 0.4em;
+}
+
+.usage-stats__table th {
+  text-align: left;
+  font-weight: 600;
+  color: #555;
+}
+
+.usage-stats__table td {
+  text-align: right;
+  color: #222;
+  font-variant-numeric: tabular-nums;
+}
+
+.usage-stats__table tr:nth-child(even) {
+  background: #f2f2f2;
+}

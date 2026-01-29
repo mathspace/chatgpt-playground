@@ -178,6 +178,9 @@ export default function App() {
     if (!data) {
       return;
     }
+    if (data.usage) {
+      setUsageStats(data.usage);
+    }
     const delta = data.delta || data.message;
     if (delta) {
       setPayloadKey('messages', msgs => {
@@ -234,12 +237,14 @@ export default function App() {
   const [completionURL, setCompletionURL] = useLocalStorage(completionURLLocalStorageKey, OpenAI.openAICompletionURL);
   const [openAIRequest, setOpenAIRequest] = useState(null);
   const [stopReason, setStopReason] = useState('');
+  const [usageStats, setUsageStats] = useState(null);
   const submit = useCallback(async () => {
     if (!apiKey) {
       setStopReason('set API key & try again');
       setShowAPIKeyModal(true);
       return;
     }
+    setUsageStats(null);
     setStopReason('');
     const req = OpenAI.createRequest({
       apiKey,
@@ -401,6 +406,7 @@ export default function App() {
         markdown={!!state.markdown}
         renderMath={!!state.render_math}
         renderDiagrams={!!state.render_diagrams}
+        usageStats={usageStats}
       />
     </div>
 

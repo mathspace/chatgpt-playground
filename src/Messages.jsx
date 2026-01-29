@@ -174,7 +174,61 @@ function MarkdownRenderer({ content, showCaret, renderMath, renderDiagrams }) {
   }, [content, showCaret, renderMath, renderDiagrams]);
 }
 
-export function Messages({ messages, setMessages, triggerSubmit, onSubmit, onCancel, stopReason, streaming, markdown, renderMath, renderDiagrams }) {
+function flattenUsageStats(stats, prefix = '') {
+  if (!stats || typeof stats !== 'object') {
+    return [];
+  }
+  const rows = [];
+  for (const [key, value] of Object.entries(stats)) {
+    const label = prefix ? `${prefix}.${key}` : key;
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      rows.push(...flattenUsageStats(value, label));
+    } else {
+      rows.push({ label, value });
+    }
+  }
+  return rows;
+}
+
+function formatUsageValue(value) {
+  if (value === null) {
+    return "null";
+  }
+  if (Array.isArray(value)) {
+    return JSON.stringify(value);
+  }
+  if (typeof value === 'number' || typeof value === 'boolean') {
+    return String(value);
+  }
+  if (typeof value === 'string') {
+    return value;
+  }
+  return JSON.stringify(value);
+}
+
+function UsageStats({ usage }) {
+  const rows = useMemo(() => flattenUsageStats(usage), [usage]);
+  if (!rows.length) {
+    return null;
+  }
+  return (
+    <div className="usage-stats" aria-live="polite">
+      <div className="usage-stats__title">Usage</div>
+      <table className="usage-stats__table">
+        <tbody>
+          {rows.map(({ label, value }) => (
+            <tr key={label}>
+              <th>{label}</th>
+              <td>{formatUsageValue(value)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+export function Messages({ messages, setMessages, triggerSubmit, onSubmit, onCancel, stopReason, streaming, markdown, renderMath, renderDiagrams, usageStats }) {
 
   const [prevStreamState, setPrevStreamState] = useState(streaming);
   useEffect(() => setPrevStreamState(streaming), [streaming]);
@@ -379,6 +433,7 @@ export function Messages({ messages, setMessages, triggerSubmit, onSubmit, onCan
         )
     }
     {stopReason ? <span className="stop-reason">{stopReason}</span> : ''}
+    <UsageStats usage={usageStats} />
     <div ref={bottomRef} style={{ visibility: "hidden", height: "0" }} />
   </>;
 }

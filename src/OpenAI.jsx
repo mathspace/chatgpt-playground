@@ -37,6 +37,9 @@ export function createRequest({
   if (payload.messages[0].role === "system" && !payload.messages[0].content) {
     payload.messages.shift();
   }
+  if (payload.stream === true && payload.stream_options === undefined) {
+    payload.stream_options = { include_usage: true };
+  }
   const abortController = new AbortController();
 
   if (payload.stream !== true) {
@@ -52,7 +55,12 @@ export function createRequest({
         if (data.error) {
           throw `${data.error.type}: ${data.error.message}`;
         }
-        await dataCallback(data.choices[0]);
+        const choice = data.choices && data.choices[0];
+        if (choice) {
+          await dataCallback({ ...choice, usage: data.usage });
+        } else if (data.usage) {
+          await dataCallback({ usage: data.usage });
+        }
         await dataCallback();
       },
       cancel: () => abortController.abort(),
@@ -93,7 +101,12 @@ export function createRequest({
           if (data.error) {
             throw `${data.error.type}: ${data.error.message}`;
           }
-          await dataCallback(data.choices[0]);
+          const choice = data.choices && data.choices[0];
+          if (choice) {
+            await dataCallback({ ...choice, usage: data.usage });
+          } else if (data.usage) {
+            await dataCallback({ usage: data.usage });
+          }
         }
       }
     },
