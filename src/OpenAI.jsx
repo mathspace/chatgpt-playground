@@ -317,6 +317,16 @@ export function createValidator() {
         throw "Logit bias keys must be non-negative integers.";
       }
     }
+    // json_schema response format must have a name and schema.
+    if (p.response_format?.type === "json_schema") {
+      const js = p.response_format.json_schema;
+      if (!js?.name) {
+        throw "JSON Schema response format requires a schema name.";
+      }
+      if (!js?.schema || typeof js.schema !== "object" || Object.keys(js.schema).length === 0) {
+        throw "JSON Schema response format requires a non-empty schema.";
+      }
+    }
   };
 }
 
