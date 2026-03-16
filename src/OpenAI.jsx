@@ -317,6 +317,16 @@ export function createValidator() {
         throw "Logit bias keys must be non-negative integers.";
       }
     }
+    // json_schema response format must have a name and schema.
+    if (p.response_format?.type === "json_schema") {
+      const js = p.response_format.json_schema;
+      if (!js?.name) {
+        throw "JSON Schema response format requires a schema name.";
+      }
+      if (!js?.schema || typeof js.schema !== "object" || Object.keys(js.schema).length === 0) {
+        throw "JSON Schema response format requires a non-empty schema.";
+      }
+    }
   };
 }
 
@@ -371,12 +381,12 @@ export function ReasoningEffortDropdown({ effort, setEffort }) {
         value={effort ? effort : ""}
       >
         <option value="">Default (Medium)</option>
-        {["Low", "Medium", "High"].map((e) => (
+        {["Low", "Medium", "High", "XHigh"].map((e) => (
           <option key={e.toLowerCase()} value={e.toLowerCase()}>
             {e}
           </option>
         ))}
-        {effort && { low: 1, medium: 1, high: 1 }[effort] === undefined && (
+        {effort && { low: 1, medium: 1, high: 1, xhigh: 1 }[effort] === undefined && (
           <>
             <option disabled>Custom</option>
             <option value={effort}>{effort}</option>
