@@ -116,6 +116,18 @@ export function createRequest({
 
 export const models = [
   {
+    id: "gpt-5.4",
+    alias: true,
+  },
+  {
+    id: "gpt-5.4-mini",
+    alias: true,
+  },
+  {
+    id: "gpt-5.4-nano",
+    alias: true,
+  },
+  {
     id: "gpt-5",
     alias: true,
   },
@@ -200,6 +212,15 @@ export const models = [
     alias: true,
   },
 
+  {
+    id: "gpt-5.4-2026-03-05",
+  },
+  {
+    id: "gpt-5.4-mini-2026-03-17",
+  },
+  {
+    id: "gpt-5.4-nano-2026-03-17",
+  },
   {
     id: "gpt-5-2025-08-07",
   },
@@ -386,12 +407,13 @@ export function ReasoningEffortDropdown({ effort, setEffort }) {
             {e}
           </option>
         ))}
-        {effort && { low: 1, medium: 1, high: 1, xhigh: 1 }[effort] === undefined && (
-          <>
-            <option disabled>Custom</option>
-            <option value={effort}>{effort}</option>
-          </>
-        )}
+        {effort &&
+          { low: 1, medium: 1, high: 1, xhigh: 1 }[effort] === undefined && (
+            <>
+              <option disabled>Custom</option>
+              <option value={effort}>{effort}</option>
+            </>
+          )}
       </select>
     </>
   );
