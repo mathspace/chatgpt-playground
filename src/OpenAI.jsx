@@ -116,6 +116,26 @@ export function createRequest({
 
 export const models = [
   {
+    id: "gpt-5.6",
+    alias: true,
+  },
+  {
+    id: "gpt-5.6-sol",
+    alias: true,
+  },
+  {
+    id: "gpt-5.6-terra",
+    alias: true,
+  },
+  {
+    id: "gpt-5.6-luna",
+    alias: true,
+  },
+  {
+    id: "gpt-5.5",
+    alias: true,
+  },
+  {
     id: "gpt-5.4",
     alias: true,
   },
@@ -125,6 +145,14 @@ export const models = [
   },
   {
     id: "gpt-5.4-nano",
+    alias: true,
+  },
+  {
+    id: "gpt-5.2",
+    alias: true,
+  },
+  {
+    id: "gpt-5.1",
     alias: true,
   },
   {
@@ -164,11 +192,23 @@ export const models = [
     alias: true,
   },
   {
+    id: "chat-latest",
+    alias: true,
+  },
+  {
     id: "chatgpt-4o-latest",
     alias: true,
   },
   {
     id: "gpt-4o-mini",
+    alias: true,
+  },
+  {
+    id: "gpt-audio-1.5",
+    alias: true,
+  },
+  {
+    id: "gpt-audio",
     alias: true,
   },
   {
@@ -213,6 +253,9 @@ export const models = [
   },
 
   {
+    id: "gpt-5.5-2026-04-23",
+  },
+  {
     id: "gpt-5.4-2026-03-05",
   },
   {
@@ -220,6 +263,12 @@ export const models = [
   },
   {
     id: "gpt-5.4-nano-2026-03-17",
+  },
+  {
+    id: "gpt-5.2-2025-12-11",
+  },
+  {
+    id: "gpt-5.1-2025-11-13",
   },
   {
     id: "gpt-5-2025-08-07",
@@ -256,6 +305,9 @@ export const models = [
   },
   {
     id: "gpt-4o-2024-05-13",
+  },
+  {
+    id: "gpt-audio-2025-08-28",
   },
   {
     id: "o1-2024-12-17",
