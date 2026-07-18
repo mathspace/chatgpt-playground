@@ -446,6 +446,16 @@ export function ModelDropdown({ model, setModel }) {
   );
 }
 
+const reasoningEfforts = [
+  { value: "none", label: "None" },
+  { value: "minimal", label: "Minimal" },
+  { value: "low", label: "Low" },
+  { value: "medium", label: "Medium" },
+  { value: "high", label: "High" },
+  { value: "xhigh", label: "XHigh" },
+  { value: "max", label: "Max" },
+];
+
 export function ReasoningEffortDropdown({ effort, setEffort }) {
   return (
     <>
@@ -453,14 +463,14 @@ export function ReasoningEffortDropdown({ effort, setEffort }) {
         onChange={(e) => setEffort(e.target.value || undefined)}
         value={effort ? effort : ""}
       >
-        <option value="">Default (Medium)</option>
-        {["Low", "Medium", "High", "XHigh"].map((e) => (
-          <option key={e.toLowerCase()} value={e.toLowerCase()}>
-            {e}
+        <option value="">Default</option>
+        {reasoningEfforts.map(({ value, label }) => (
+          <option key={value} value={value}>
+            {label}
           </option>
         ))}
         {effort &&
-          { low: 1, medium: 1, high: 1, xhigh: 1 }[effort] === undefined && (
+          !reasoningEfforts.some(({ value }) => value === effort) && (
             <>
               <option disabled>Custom</option>
               <option value={effort}>{effort}</option>
