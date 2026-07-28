@@ -48,6 +48,11 @@
   content: "Assistant";
 }
 
+.messages>.message[data-refusal="true"]>.type::before {
+  content: "Assistant (Refusal)";
+  color: crimson;
+}
+
 .messages>.message[data-type="function_call"]>.type::before {
   content: "Assistant (Function Call)";
 }

@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import InfoLabel from "./InfoLabel.jsx";
 import { ResponseFormatSchemaModal } from "./ResponseFormatSchemaModal.jsx";
 
-export function ResponseFormatSelector({ responseFormat, setResponseFormat }) {
+export function ResponseFormatSelector({ apiType, responseFormat, setResponseFormat }) {
   const [showSchemaModal, setShowSchemaModal] = useState(false);
 
   let value = responseFormat;
@@ -45,7 +45,7 @@ export function ResponseFormatSelector({ responseFormat, setResponseFormat }) {
   const schemaConfigured = responseFormat?.json_schema?.name;
 
   return <>
-    <label>Response Format<InfoLabel href="response_format" /></label>
+    <label>Response Format<InfoLabel href="response_format" apiType={apiType} /></label>
     <select onChange={setType} value={value}>
       <option value="default">
         Default (Text)

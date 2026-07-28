@@ -4,7 +4,9 @@ import mermaid from 'mermaid';
 mermaid.initialize({
   startOnLoad: false,
   theme: "default",
-  securityLevel: "loose",
+  // Assistant output is untrusted. Mermaid's strict mode sanitizes generated
+  // SVG while preserving normal diagram rendering.
+  securityLevel: "strict",
   themeCSS: `
     g.classGroup rect {
       fill: #282a36;

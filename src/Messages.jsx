@@ -12,6 +12,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { codeRunnerFunctionName, getCodeRunnerFunctionCallCode, runPython } from "./CodeRunner";
 import { copyToClipboard } from "./Clipboard.jsx";
+import { isResponsesMetadataCarrier } from "./OpenAIRequest.js";
 
 const typeToRole = {
   'user': 'user',
@@ -106,7 +107,11 @@ function getCodeRunButton({ m, runCode }) {
   if (!code) {
     return null;
   }
-  return <span title="Run Code" className="run-code" onClick={() => runCode(code)} />;
+  return <span
+    title="Run Code"
+    className="run-code"
+    onClick={() => runCode(code, m._responses_call_id)}
+  />;
 };
 
 function getMarkdownFunctionCallBox({ m, i }) {
@@ -228,7 +233,7 @@ function UsageStats({ usage }) {
   );
 }
 
-export function Messages({ messages, setMessages, triggerSubmit, onSubmit, onCancel, stopReason, streaming, markdown, renderMath, renderDiagrams, usageStats }) {
+export function Messages({ messages, setMessages, triggerSubmit, onSubmit, onCancel, stopReason, streaming, markdown, renderMath, renderDiagrams, usageStats, requestStatus }) {
 
   const [prevStreamState, setPrevStreamState] = useState(streaming);
   useEffect(() => setPrevStreamState(streaming), [streaming]);
@@ -240,6 +245,14 @@ export function Messages({ messages, setMessages, triggerSubmit, onSubmit, onCan
   const lastMsgContentRef = useRef(null);
   const bottomRef = useRef(null);
   const [added, setAdded] = useState(true);
+  const lastVisibleMessageIndex = useMemo(() => {
+    for (let i = messages.length - 1; i >= 0; i -= 1) {
+      if (!isResponsesMetadataCarrier(messages[i])) {
+        return i;
+      }
+    }
+    return -1;
+  }, [messages]);
   useEffect(() => {
     if (bottomRef.current && added) {
       if (lastMsgContentRef.current) {
@@ -264,6 +277,10 @@ export function Messages({ messages, setMessages, triggerSubmit, onSubmit, onCan
         name: lastMsg && msgType(lastMsg) === "function_call" ? lastMsg.function_call.name : undefined,
         content: '',
         function_call: newMsgType === 'function_call' ? { name: '', arguments: '' } : undefined,
+        _responses_call_id:
+          newMsgType === "function_result"
+            ? lastMsg?._responses_call_id
+            : undefined,
       };
       return [...messages, newMsg];
     });
@@ -284,11 +301,17 @@ export function Messages({ messages, setMessages, triggerSubmit, onSubmit, onCan
       const oldName = m.name;
       const oldFnCall = m.function_call;
       const oldContent = m.content;
+      const responseCallId = m._responses_call_id;
       const newMsg = {
         role: typeToRole[newType],
         name: newType === "function_result" ? ((oldFnCall && oldFnCall.name) || '') : undefined,
         content: oldContent || (oldFnCall && oldFnCall.arguments) || '',
         function_call: newType === 'function_call' ? { name: oldName || '', arguments: oldContent || '' } : undefined,
+        _responses_call_id:
+          responseCallId &&
+          (newType === "function_call" || newType === "function_result")
+            ? responseCallId
+            : undefined,
       };
       return [...messages.slice(0, i), newMsg, ...messages.slice(i + 1)]
     });
@@ -309,21 +332,22 @@ export function Messages({ messages, setMessages, triggerSubmit, onSubmit, onCan
     return () => document.removeEventListener('keydown', l);
   }, [streaming, onCancel, onSubmit]);
 
-  const runCode = useCallback((code) => {
+  const runCode = useCallback((code, responseCallId) => {
     const runObj = runPython(code, (result) => {
       const newMsg = {
         role: 'function',
         name: codeRunnerFunctionName,
         content: result,
+        _responses_call_id: responseCallId,
       };
       setMessages([...messages, newMsg]);
       triggerSubmit();
-      document.addEventListener('keydown', escapeHandler, false);
+      document.removeEventListener('keydown', escapeHandler, false);
       setRunningCode(null);
     });
     var cancel = () => {
       runObj.terminate();
-      document.addEventListener('keydown', escapeHandler, false);
+      document.removeEventListener('keydown', escapeHandler, false);
       setRunningCode(null);
     };
     var escapeHandler = e => {
@@ -340,6 +364,7 @@ export function Messages({ messages, setMessages, triggerSubmit, onSubmit, onCan
   useEffect(() => {
     if (
       !stopReason &&
+      requestStatus === "completed" &&
       prevStreamState &&
       !streaming &&
       messages.length > 0
@@ -347,19 +372,25 @@ export function Messages({ messages, setMessages, triggerSubmit, onSubmit, onCan
       const lastMsg = messages[messages.length - 1];
       const code = getCodeRunnerFunctionCallCode(lastMsg);
       if (code) {
-        runCode(code);
+        runCode(code, lastMsg._responses_call_id);
       }
     }
-  }, [prevStreamState, streaming, stopReason, messages]);
+  }, [prevStreamState, streaming, stopReason, messages, requestStatus]);
 
   return <>
     <div className="messages">
       {messages.map((m, i) =>
-        <div className="message" key={i} data-type={msgType(m)}>
-          {(runningCode || streaming) && i === messages.length - 1 ? <label className="type" /> : <>
+        isResponsesMetadataCarrier(m) ? null :
+        <div
+          className="message"
+          key={i}
+          data-type={msgType(m)}
+          data-refusal={m._responses_refusal ? "true" : undefined}
+        >
+          {(runningCode || streaming) && i === lastVisibleMessageIndex ? <label className="type" /> : <>
             <label className="type" onClick={() => switchType(i)} />
             <span className="delete" onClick={() => deleteMsg(i)} />
-            {i === messages.length - 1 ? getCodeRunButton({ m, runCode }) : null}
+            {i === lastVisibleMessageIndex ? getCodeRunButton({ m, runCode }) : null}
           </>}
           {msgType(m) === 'function_result' || msgType(m) === 'function_call' ?
             <input
@@ -379,18 +410,18 @@ export function Messages({ messages, setMessages, triggerSubmit, onSubmit, onCan
             />
             : ''}
           {markdown && msgType(m) === 'assistant' ?
-            <div className="markdown" ref={i === messages.length - 1 ? lastMsgContentRef : undefined}>
-              {m.content.trim() === '' && !(i === messages.length - 1 && streaming) ?
+            <div className="markdown" ref={i === lastVisibleMessageIndex ? lastMsgContentRef : undefined}>
+              {m.content.trim() === '' && !(i === lastVisibleMessageIndex && streaming) ?
                 <div style={{ padding: "1em 0" }}>
                   <i>empty markdown content&nbsp;-&nbsp;
                     turn off "Render Markdown" to edit.</i>
                 </div>
                 :
-                <MarkdownRenderer key={i} renderDiagrams={renderDiagrams} renderMath={renderMath} content={m.content} showCaret={i === messages.length - 1 && streaming} />
+                <MarkdownRenderer key={i} renderDiagrams={renderDiagrams} renderMath={renderMath} content={m.content} showCaret={i === lastVisibleMessageIndex && streaming} />
               }
             </div>
             : ((markdown && getMarkdownFunctionCallBox({ m, i })) || <AutoExtendingTextarea
-              ref={i === messages.length - 1 ? lastMsgContentRef : undefined}
+              ref={i === lastVisibleMessageIndex ? lastMsgContentRef : undefined}
               onInput={(e) => {
                 const mm = JSON.parse(JSON.stringify(m));
                 if (mm.function_call) {
@@ -403,13 +434,13 @@ export function Messages({ messages, setMessages, triggerSubmit, onSubmit, onCan
               className="content"
               value={
                 (m.function_call ? m.function_call.arguments : m.content) +
-                (i === messages.length - 1 && streaming ? '▏' : '')
+                (i === lastVisibleMessageIndex && streaming ? '▏' : '')
               }
               placeholder={{
                 "function_call": "Function Arguments",
                 "function_result": "Function Result",
               }[msgType(m)] || ""}
-              readOnly={streaming && i === messages.length - 1}
+              readOnly={streaming && i === lastVisibleMessageIndex}
             />)
           }
         </div>

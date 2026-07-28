@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { hashEncode } from './AppStateCodec.jsx';
+import { hashEncode } from './AppStateCodec.js';
 
 // copyToClipboard copies the given text to the clipboard by some hacky means.
 export function copyToClipboard(text) {
@@ -85,8 +85,9 @@ export function SaveButton({ children = "Save", appState, autorun }) {
 
 export function CopyLinkButton({ children = "Copy Link", appState, autorun }) {
   const copy = e => {
-    const url = window.location.href.split('#')[0] + '#' + hashEncode(appState);
     try {
+      const url =
+        window.location.href.split('#')[0] + '#' + hashEncode(appState);
       copyToClipboard(url);
       e.target.classList.add('done');
       setTimeout(() => e.target.classList.remove('done'), 1000);

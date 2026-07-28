@@ -55,11 +55,14 @@ function newPyodideWorker() {
     }
   };
 
-  w.terminate = (error) => {
+  w.terminate = (error, notify = true) => {
     if (w.terminated) return;
     w.terminated = true;
     worker.terminate();
-    callbacks.forEach(c => c({ output: `TERMINATED${error ? ' - ' + error : ''}` }));
+    if (notify) {
+      callbacks.forEach(c => c(`TERMINATED${error ? ' - ' + error : ''}`));
+    }
+    callbacks = [];
   };
 
   worker.onmessage = (event) => {
@@ -84,7 +87,7 @@ export function runPython(script, onDone) {
   pyodideWorker.add({ script, onDone });
   return {
     terminate: () => {
-      pyodideWorker.terminate();
+      pyodideWorker.terminate(undefined, false);
     },
   }
 }

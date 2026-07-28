@@ -15,7 +15,14 @@ export function APIKeyModal({ apiKey, onSave, onCancel }) {
       <a href="https://platform.openai.com/account/api-keys" target="_blank" rel="noopener">Get a new key</a> and
       enter it below:
     </p>
-    <input ref={ref} type="text" placeholder="sk-..." defaultValue={apiKey} />
+    <input
+      ref={ref}
+      type="text"
+      autoComplete="off"
+      spellCheck={false}
+      placeholder="sk-..."
+      defaultValue={apiKey}
+    />
     <button onClick={() => onSave(ref.current.value)}>Save</button>
     &nbsp;
     <button onClick={onCancel}>Cancel</button>

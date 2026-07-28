@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import InfoLabel from "./InfoLabel.jsx";
 
-export function FunctionCallSelector({ functions, functionCall, setFunctionCall }) {
+export function FunctionCallSelector({ apiType, functions, functionCall, setFunctionCall }) {
 
   let value = functionCall;
   if (value === undefined) {
@@ -21,7 +21,7 @@ export function FunctionCallSelector({ functions, functionCall, setFunctionCall 
     }
   }, [setFunctionCall]);
 
-  return <><label>Function Call<InfoLabel href="function_call" /></label>
+  return <><label>Function Call<InfoLabel href="function_call" apiType={apiType} /></label>
     <select onChange={setType} value={value}>
       <option value="default">
         Default ({functions ? "Auto" : "None"})

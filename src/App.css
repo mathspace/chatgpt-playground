@@ -195,6 +195,25 @@ code {
   margin-top: 10px;
 }
 
+.api-endpoint-modal label {
+  display: block;
+  margin: 1em 0 0.35em;
+}
+
+.api-endpoint-modal__actions {
+  display: flex;
+  gap: 0.5em;
+  margin-top: 1em;
+}
+
+.api-endpoint-modal__error {
+  color: #b00020;
+}
+
+.api-endpoint-modal__reset {
+  margin-left: auto;
+}
+
 .stop-sequences {
   height: 8em;
 }

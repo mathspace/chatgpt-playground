@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { hashEncode, hashDecode } from './AppStateCodec';
+import { hashEncode, hashDecode } from './AppStateCodec.js';
 import { useHash } from './Hash';
 
 export default function WindowHash({ state, setState, defaultState, loadState }) {
@@ -26,7 +26,13 @@ export default function WindowHash({ state, setState, defaultState, loadState })
       window.clearTimeout(timeoutHandle);
     }
     setTimeoutHandle(window.setTimeout(() => {
-      setHash(hashEncode(state), true);
+      try {
+        setHash(hashEncode(state), true);
+      } catch (e) {
+        // Keep the last reloadable hash. Save-to-JSON remains available for
+        // sessions that are too large for a browser URL.
+        console.warn(e.message || e);
+      }
     }, 200));
   }, [state])
 }

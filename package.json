@@ -1,12 +1,14 @@
 {
+  "type": "module",
   "scripts": {
     "build": "mkdir -p out && cp -f pyodide-worker.js favicon.png index.html out && NODE_ENV=production npx esbuild src/main.jsx --minify --bundle --outfile=out/main.js --jsx=automatic --sourcemap=external --loader:.svg=file --loader:.woff=file --loader:.woff2=file --loader:.ttf=file",
-    "dev": "mkdir -p out && cp -f pyodide-worker.js favicon.png index.html out && npx esbuild src/main.jsx --bundle --outfile=out/main.js --jsx=automatic --sourcemap=inline --loader:.svg=file --loader:.woff=file --loader:.woff2=file --loader:.ttf=file --watch --servedir=out"
+    "dev": "mkdir -p out && cp -f pyodide-worker.js favicon.png index.html out && npx esbuild src/main.jsx --bundle --outfile=out/main.js --jsx=automatic --sourcemap=inline --loader:.svg=file --loader:.woff=file --loader:.woff2=file --loader:.ttf=file --watch --servedir=out",
+    "test": "node --test"
   },
   "dependencies": {
     "gpt-tokenizer": "^2.1.1",
-    "gzip-js": "^0.3.2",
     "mermaid": "^10.9.0",
+    "pako": "^3.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-markdown": "^9.0.1",

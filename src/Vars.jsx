@@ -1,28 +1,8 @@
 import "./Vars.css";
-
-// Substitutes variables in the app state with their values from a map or with a
-
 import AutoExtendingTextarea from "./AutoExtendingTextarea";
+import { sub } from "./VariableSubstitution.js";
 
-// result of a function.
-export function sub(openai_payload, repl) {
-  let replFn;
-  if (typeof repl === 'function') {
-    replFn = (_, v) => repl(v);
-  } else {
-    let vars = repl;
-    replFn = (_, v) => vars[v] || '';
-  }
-  openai_payload = JSON.parse(JSON.stringify(openai_payload)); // clone
-  const pat = /\$\{([a-z0-9_.-]+)\}/ig;
-  openai_payload.messages = openai_payload.messages.map(m => {
-    if (m.role !== 'assistant') {
-      m.content = m.content.replace(pat, replFn);
-    }
-    return m;
-  });
-  return openai_payload;
-}
+export { sub } from "./VariableSubstitution.js";
 
 export function Vars({ openai_payload, appVars, setAppVars }) {
   const vars = new Set();

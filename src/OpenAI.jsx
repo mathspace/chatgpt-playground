@@ -1,118 +1,21 @@
 import { encode, decode } from "gpt-tokenizer/esm/encoding/cl100k_base";
+import {
+  chatCompletionsAPI,
+  responsesAPI,
+} from "./OpenAIRequest.js";
 
-export const openAICompletionURL = "https://api.openai.com/v1/chat/completions";
-
-async function getResponse({ url, apiKey, payload, signal }) {
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      Authorization: "Bearer " + apiKey,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ ...payload, n: 1 }),
-    signal: signal,
-  });
-
-  if (!response.ok) {
-    var jsonErr;
-    try {
-      jsonErr = await response.json();
-    } catch (e) {}
-    if (jsonErr) {
-      throw "APIError: " + (jsonErr.error.message || jsonErr.error.code);
-    }
-    throw `HTTPError: ${response.status}`;
-  }
-  return response;
-}
-
-export function createRequest({
-  apiKey,
-  payload,
-  dataCallback,
-  completionURL = openAICompletionURL,
-}) {
-  payload = JSON.parse(JSON.stringify(payload));
-  // Remove system message if empty.
-  if (payload.messages[0].role === "system" && !payload.messages[0].content) {
-    payload.messages.shift();
-  }
-  if (payload.stream === true && payload.stream_options === undefined) {
-    payload.stream_options = { include_usage: true };
-  }
-  const abortController = new AbortController();
-
-  if (payload.stream !== true) {
-    return {
-      send: async () => {
-        const response = await getResponse({
-          url: completionURL,
-          apiKey,
-          payload,
-          signal: abortController.signal,
-        });
-        const data = await response.json();
-        if (data.error) {
-          throw `${data.error.type}: ${data.error.message}`;
-        }
-        const choice = data.choices && data.choices[0];
-        if (choice) {
-          await dataCallback({ ...choice, usage: data.usage });
-        } else if (data.usage) {
-          await dataCallback({ usage: data.usage });
-        }
-        await dataCallback();
-      },
-      cancel: () => abortController.abort(),
-    };
-  }
-
-  return {
-    send: async () => {
-      const response = await getResponse({
-        url: completionURL,
-        apiKey,
-        payload,
-        signal: abortController.signal,
-      });
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder("utf-8");
-
-      var buf = "";
-      while (true) {
-        var { value, done } = await reader.read();
-        if (done) {
-          throw "APIError: stream ended unexpectedly";
-        }
-        buf += decoder.decode(value);
-        while (buf.indexOf("\n") !== -1) {
-          const nlIdx = buf.indexOf("\n");
-          var line = buf.slice(0, nlIdx).trim();
-          buf = buf.slice(nlIdx + 1);
-          if (!line.startsWith("data:")) {
-            continue;
-          }
-          line = line.slice("data:".length).trim();
-          if (line === "[DONE]") {
-            await dataCallback();
-            return;
-          }
-          const data = JSON.parse(line);
-          if (data.error) {
-            throw `${data.error.type}: ${data.error.message}`;
-          }
-          const choice = data.choices && data.choices[0];
-          if (choice) {
-            await dataCallback({ ...choice, usage: data.usage });
-          } else if (data.usage) {
-            await dataCallback({ usage: data.usage });
-          }
-        }
-      }
-    },
-    cancel: () => abortController.abort(),
-  };
-}
+export {
+  apiTypes,
+  chatCompletionsAPI,
+  createRequest,
+  normalizeAPIType,
+  openAICompletionURL,
+  openAIResponsesURL,
+  responsesAPI,
+  supportsResponsesSamplingControls,
+  translateToResponsesPayload,
+  validateEndpointURL,
+} from "./OpenAIRequest.js";
 
 export const models = [
   {
@@ -406,6 +309,19 @@ export function createValidator() {
 // This is an estimate arrived at by running a whole bunch of text through
 // tiktoken tokenizer.
 const charToTokenRatio = 0.34;
+
+export function APITypeDropdown({ apiType, setAPIType }) {
+  return (
+    <select
+      aria-label="API"
+      onChange={(e) => setAPIType(e.target.value)}
+      value={apiType}
+    >
+      <option value={chatCompletionsAPI}>Chat Completion API</option>
+      <option value={responsesAPI}>Responses API</option>
+    </select>
+  );
+}
 
 export function ModelDropdown({ model, setModel }) {
   const baseModel = !!models.find((m) => m.id === model);
